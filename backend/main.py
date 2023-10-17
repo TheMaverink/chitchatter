@@ -13,6 +13,7 @@ config = dotenv_values(".env")
 openaiOrgKey = config["OPEN_AI_ORG"]
 openaiApiKey = config["OPEN_API_KEY"]
 
+from functions.database import store_messages,reset_messages
 from functions.openai_requests import convert_audio_to_text, get_chat_response
 
 # Get Environment Vars
@@ -44,6 +45,14 @@ app.add_middleware(
 async def check_health():
     return {"response": "healthy"}
 
+# reset messages
+@app.get("/reset")
+async def reset_conversation():
+    reset_messages()
+    return {"message": "conversation reset"}
+
+
+
 
 # Post bot response
 # Note: Not playing back in browser when using post request.
@@ -59,6 +68,8 @@ async def get_audio(file: UploadFile = File(...)):
     print(message_decoded)
 
     chat_response = get_chat_response(message_decoded)
+
+    store_messages(message_decoded,chat_response)
 
     print("chat_response")
     print(chat_response)
