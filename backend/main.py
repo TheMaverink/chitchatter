@@ -57,9 +57,14 @@ async def reset_conversation():
 
 # Post bot response
 # Note: Not playing back in browser when using post request.
-@app.get("/post-audio-get/")
-async def get_audio():
-    audio_input = open("test.mp3", "rb")
+@app.post("/post-audio/")
+async def post_audio(file:UploadFile=File(...)):
+    # audio_input = open("test.mp3", "rb")
+    with open(file.filename,"wb") as buffer:
+        buffer.write(file.file.read())
+    audio_input = open(file.filename,"rb")
+
+
     # Decode audio
     message_decoded = convert_audio_to_text(audio_input)
 
@@ -88,4 +93,4 @@ async def get_audio():
         yield audio_output
 
     # Use for Post: Return output audio
-    return StreamingResponse(iterfile(),  media_type="audio/mpeg")
+    return StreamingResponse(iterfile(),  media_type="application/octec-stream")
