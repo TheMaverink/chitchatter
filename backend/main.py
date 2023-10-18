@@ -59,7 +59,7 @@ async def reset_conversation():
 # Note: Not playing back in browser when using post request.
 @app.post("/post-audio/")
 async def post_audio(file:UploadFile=File(...)):
-    # audio_input = open("test.mp3", "rb")
+
     with open(file.filename,"wb") as buffer:
         buffer.write(file.file.read())
     audio_input = open(file.filename,"rb")
